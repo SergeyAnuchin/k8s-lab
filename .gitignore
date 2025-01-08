@@ -1,0 +1,5 @@
+talosconfig
+controlplane*.yaml
+worker*.yaml
+*.sh
+metallb/
