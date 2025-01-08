@@ -7,14 +7,14 @@ flowchart LR
     A[WAN] <-->|eth1| B(Management node)
     B <-->|eth2| C(LAN)
 ```
-### management VM
+### Management VM
 On management VM install docker, enable ip forwarding and nat for internal network. Select hostname,fqdn and lan ip for management node (matchbox.test.local in this example).
 
-### cluster VMs
-Create VMs for cluster roles. [System reqs](https://www.talos.dev/v1.9/introduction/system-requirements/). In this readme we will use 3 control plane VMs and 3 workers. Write down MAC addresses of those VMs.
+### Cluster VM
+Create virtual machines. [System reqs](https://www.talos.dev/v1.9/introduction/system-requirements/). In this lab we will use 3 control plane machines and 3 workers. Write down MAC addresses of all created machines.
 
-### dnsmasq
-Start dnsmasq docker container on management node. Change network range, IPs, and MAC addresses as you want.
+### Dnsmasq
+Start dnsmasq docker container on management node. Change network range, IPs, and MAC addresses:
 ```bash
 docker run --rm --cap-add=NET_ADMIN --net=host dnsmasq:0.0.1 \
   -d -q \
@@ -42,7 +42,7 @@ docker run --rm --cap-add=NET_ADMIN --net=host dnsmasq:0.0.1 \
   --log-dhcp
 ```
 
-### talos
+### Talos
 1. Read [docs](https://www.talos.dev/v1.9/introduction/prodnotes/)
 2. This guide uses 3 control plane node with VIP (patch-network-vip.yaml). [About patches](https://www.talos.dev/v1.9/talos-guides/configuration/patching/#configuration-patching-with-talosctl-cli)
 3. Cluster example:
@@ -52,13 +52,13 @@ generating PKI and tokens
 created /Users/taloswork/controlplane.yaml
 created /Users/taloswork/worker.yaml
 created /Users/taloswork/talosconfig
-``` 
-4. controlplane and worker yaml files(afer apply requred patches) you need to copy in matchbox assets folder. Read guide below.
+```
+4. After applying patches you need to copy controlplane.yaml and worker.yaml to matchbox assets folder. 
 
 ### matchbox
 Create ```/var/lib/matchbox/{assets,profiles,groups}``` folders.
 
-Follow [this](https://www.talos.dev/v1.9/talos-guides/install/bare-metal-platforms/matchbox/#create-the-matchbox-configuration-files) guide to create requred matchbox files. You must name your profile json file with the same name as profile have in json.
+Follow [this guide](https://www.talos.dev/v1.9/talos-guides/install/bare-metal-platforms/matchbox/#create-the-matchbox-configuration-files) to create required matchbox files. You need to name the profile.json file the same way you defined the profile name inside the file.
 
 At the end you will have something like this:
 ```
@@ -79,7 +79,7 @@ At the end you will have something like this:
     default.json
 ```
 
-Start matchbox docker container on management node
+Start matchbox docker container on management node:
 ```bash
 docker run --net=host \
     --detach --restart always \
@@ -89,7 +89,7 @@ docker run --net=host \
     -address=0.0.0.0:8080 -log-level=debug
 ```
 ## Start
-1. power on control plane nodes. Wait for pxe boot, instaling and restart.
-2. [run bootstrap command on one node](https://www.talos.dev/v1.9/introduction/getting-started/#kubernetes-bootstrap)
-3. wait for control plane sync. power on worker nodes.
+1. Power on control plane nodes. Wait for pxe boot, installing and restart.
+2. [Run bootstrap command on one node.](https://www.talos.dev/v1.9/introduction/getting-started/#kubernetes-bootstrap)
+3. Wait for control plane sync. Power on worker nodes.
 4. You have k8s cluster lab.
